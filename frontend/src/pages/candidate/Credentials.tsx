@@ -5,7 +5,7 @@ import axios from 'axios'
 import toast from 'react-hot-toast'
 
 const CREDENTIAL_SERVICE = 'http://localhost:8009'
-const WTTJ_SERVICE = 'http://localhost:8012'
+const WTTJ_SERVICE = `http://${window.location.hostname}:8012`
 const API_BASE = ((import.meta as any).env?.VITE_API_URL) || 'http://localhost:8000'
 
 export default function Credentials() {

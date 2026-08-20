@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'
 import axios from 'axios'
 
 const API_BASE = ((import.meta as any).env?.VITE_API_URL) || 'http://localhost:8000'
-const WTTJ_SERVICE_URL = 'http://localhost:8012'
+const WTTJ_SERVICE_URL = `http://${window.location.hostname}:8012`
 
 export default function JobSwipe() {
   const [jobs, setJobs] = useState<any[]>([])
