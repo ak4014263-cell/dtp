@@ -55,19 +55,20 @@ app.add_middleware(
 )
 
 # Service routing configuration
+# Use environment variables with Docker service names as defaults
 SERVICES = {
-    "auth": "http://localhost:8001",
-    "user": "http://localhost:8002",
-    "job": "http://localhost:8003",
-    "profile": "http://localhost:8004",
-    "application": "http://localhost:8003",
-    "automation": "http://localhost:8006",
-    "email": "http://localhost:8007",
-    "gmail": "http://localhost:8008",
-    "credential": "http://localhost:8009",
-    "ai": "http://localhost:8010",
-    "wttj": "http://localhost:8012",
-    "wttj_scraper": "http://localhost:8013",
+    "auth": os.environ.get("AUTH_SERVICE_URL", "http://auth:8001"),
+    "user": os.environ.get("USER_SERVICE_URL", "http://user:8002"),
+    "job": os.environ.get("JOB_SERVICE_URL", "http://job:8003"),
+    "profile": os.environ.get("PROFILE_SERVICE_URL", "http://profile:8004"),
+    "application": os.environ.get("APPLICATION_SERVICE_URL", "http://job:8003"), # Using job service for applications
+    "automation": os.environ.get("AUTOMATION_SERVICE_URL", "http://automation:8006"),
+    "email": os.environ.get("EMAIL_SERVICE_URL", "http://email:8007"),
+    "gmail": os.environ.get("GMAIL_SERVICE_URL", "http://gmail:8008"),
+    "credential": os.environ.get("CREDENTIAL_SERVICE_URL", "http://credential:8009"),
+    "ai": os.environ.get("AI_SERVICE_URL", "http://ai:8010"),
+    "wttj": os.environ.get("WTTJ_SERVICE_URL", "http://wttj:8012"),
+    "wttj_scraper": os.environ.get("WTTJ_SCRAPER_SERVICE_URL", "http://wttj_scraper:8013"),
 }
 
 @app.get("/")
