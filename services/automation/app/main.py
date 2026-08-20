@@ -63,6 +63,12 @@ openai_client = OpenAI(
 # Initialize advanced automation router
 automation_router = AutomationRouter(openai_client)
 
+try:
+    from registration_sync_service import websocket_sync
+    app.add_api_websocket_route("/ws/registration-sync", websocket_sync)
+except Exception as e:
+    logger.error(f"Failed to mount websocket: {e}")
+
 class MockRedis:
     def __init__(self):
         self.data = {}

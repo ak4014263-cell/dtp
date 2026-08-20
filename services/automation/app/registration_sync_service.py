@@ -14,6 +14,15 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Registration Sync Service")
 
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 class UserRegistrationData(BaseModel):
     """User ka registration data"""
