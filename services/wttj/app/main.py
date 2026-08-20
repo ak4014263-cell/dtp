@@ -946,6 +946,17 @@ async def _run_firefox_signup_and_onboard(
                         result["error"] = "This email is already registered on WTTJ. Please select 'I Have an Account' and sign in instead."
                         await browser.close()
                         return result
+                    
+                    # Log the HTML to see what is blocking us
+                    try:
+                        import os
+                        os.makedirs("/app/screenshots", exist_ok=True)
+                        with open(f"/app/screenshots/failed_signup_{email}.html", "w", encoding="utf-8") as f:
+                            f.write(await page.content())
+                        await page.screenshot(path=f"/app/screenshots/failed_signup_{email}.png", full_page=True)
+                        logger.error(f"Saved failed signup HTML and screenshot for {email}")
+                    except Exception as e:
+                        logger.error(f"Could not save HTML: {e}")
 
             result["success"] = registered or ("onboarding" in page.url or "me" in page.url or "dashboard" in page.url)
             result["status"] = "authenticated" if result["success"] else "auth_incomplete"
