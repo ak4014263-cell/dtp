@@ -865,23 +865,28 @@ async def _run_firefox_signup_and_onboard(
             ], password, "Password")
             await asyncio.sleep(0.8)
 
-            await dismiss_cookies()
-            await update_live_state(
-                step_name="Submitting Authentication",
-                step_index=3,
-                progress=45,
-                url=page.url,
-                log_msg=f"Submitting WTTJ authentication for {email}...",
-                page=page
-            )
+            # Human-like behavior before submit: scroll around, move mouse, wait for reCAPTCHA scoring
+            await asyncio.sleep(1.5)
+            await page.mouse.move(400, 300)
+            await asyncio.sleep(0.4)
+            await page.mouse.move(630, 545)  # hover over email field area
+            await asyncio.sleep(0.3)
+            await page.mouse.move(630, 620)  # hover near password
+            await asyncio.sleep(0.5)
+            await page.evaluate("window.scrollTo(0, 200)")
+            await asyncio.sleep(0.5)
+            await page.evaluate("window.scrollTo(0, 400)")
+            await asyncio.sleep(0.5)
+            await page.evaluate("window.scrollTo(0, 300)")
+            await asyncio.sleep(1.0)
 
-            # Submit using exact button selectors
+            # Submit - try visible yellow "Agree and create profile" button first
             submitted = False
             btn_selectors = [
-                "button[data-testid='sign-up-form-submit-button']",
-                "button[data-testid='login-button-submit']",
                 "button:has-text('Agree and create profile')",
                 "button:has-text('Create profile')",
+                "button[data-testid='sign-up-form-submit-button']",
+                "button[data-testid='login-button-submit']",
                 "button:has-text('Sign up')",
                 "button:has-text('Create account')",
                 "button[type='submit']",
@@ -895,14 +900,24 @@ async def _run_firefox_signup_and_onboard(
                     if await btn.is_visible(timeout=1000):
                         box = await btn.bounding_box()
                         if box:
-                            await page.mouse.move(box['x'] + box['width']/2, box['y'] + box['height']/2)
+                            # Scroll button into view
+                            await page.evaluate(f"document.querySelector(\"{btn_sel.replace('\"', \"'\")} \").scrollIntoView()" if False else "")
+                            await btn.scroll_into_view_if_needed()
+                            await asyncio.sleep(0.5)
+                            # Move mouse naturally to button center
+                            cx = box['x'] + box['width'] / 2
+                            cy = box['y'] + box['height'] / 2
+                            await page.mouse.move(cx - 30, cy - 10)
+                            await asyncio.sleep(0.2)
+                            await page.mouse.move(cx, cy)
                             await asyncio.sleep(0.3)
-                        await btn.click(force=True)
+                        # Regular click (not force=True so reCAPTCHA sees it)
+                        await btn.click()
                         submitted = True
-                        logger.info(f"â–¶ Clicked submit button with selector: {btn_sel}")
+                        logger.info(f"▶ Clicked submit button with selector: {btn_sel}")
                         break
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug(f"Btn selector {btn_sel} failed: {e}")
 
             if not submitted:
                 try:
