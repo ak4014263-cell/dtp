@@ -25,4 +25,4 @@ EXPOSE 8012
 RUN apt-get update && apt-get install -y xvfb && rm -rf /var/lib/apt/lists/*
 
 # Run Uvicorn wrapped in xvfb-run to provide a virtual display
-CMD ["xvfb-run", "-a", "--server-args=-screen 0 1920x1080x24", "python", "-m", "uvicorn", "services.wttj.app.main:app", "--host", "0.0.0.0", "--port", "8012"]
+CMD xvfb-run -a --server-args="-screen 0 1920x1080x24" python -m uvicorn services.wttj.app.main:app --host 0.0.0.0 --port 8012
