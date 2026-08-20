@@ -754,15 +754,23 @@ async def _run_firefox_signup_and_onboard(
     try:
         from playwright.async_api import async_playwright
         from playwright_stealth import Stealth
-
         import os
         is_headless = os.getenv('HEADLESS', 'true').lower() == 'true'
+        proxy_url = os.getenv('BROWSER_PROXY', '').strip()
+        
         async with async_playwright() as pw:
-            browser = await pw.chromium.launch(
-                headless=is_headless,
-                slow_mo=60,
-                args=["--disable-blink-features=AutomationControlled"]
-            )
+            launch_args = {
+                "headless": is_headless,
+                "slow_mo": 60,
+                "args": ["--disable-blink-features=AutomationControlled"]
+            }
+            if proxy_url:
+                launch_args["proxy"] = {"server": proxy_url}
+                logger.info(f"Browser proxy configured: {proxy_url.split('@')[-1] if '@' in proxy_url else proxy_url}")
+            else:
+                logger.warning("No BROWSER_PROXY set — reCAPTCHA may block on datacenter IPs")
+
+            browser = await pw.chromium.launch(**launch_args)
             ctx = await browser.new_context(
                 viewport={"width": 1440, "height": 900},
                 locale="en-US",
