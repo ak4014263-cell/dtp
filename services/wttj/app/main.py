@@ -878,11 +878,13 @@ async def _run_firefox_signup_and_onboard(
             # Submit using exact button selectors
             submitted = False
             btn_selectors = [
-                "button[data-testid='login-button-submit']",
                 "button[data-testid='sign-up-form-submit-button']",
-                "button[type='submit']",
+                "button[data-testid='login-button-submit']",
+                "button:has-text('Agree and create profile')",
+                "button:has-text('Create profile')",
                 "button:has-text('Sign up')",
                 "button:has-text('Create account')",
+                "button[type='submit']",
                 "button:has-text('Sign in')",
                 "button:has-text('Log in')"
             ]
@@ -908,15 +910,46 @@ async def _run_firefox_signup_and_onboard(
                 except Exception:
                     pass
 
-            # Wait for navigation / redirect
+            # Wait for navigation / redirect after form submit
+            await asyncio.sleep(3)
+            await dismiss_cookies()
+            
+            # WTTJ often redirects to /signin?redirect=/onboarding after signup.
+            # If this happens, we need to log in with the new credentials.
+            if not existing_account and "signin" in page.url and "signup" not in page.url:
+                logger.info(f"Post-signup redirect to signin detected. Logging in with new credentials...")
+                await human_type(
+                    ["input[type='email']", "input[name*='email' i]"],
+                    email, "Email (post-signup login)"
+                )
+                await asyncio.sleep(0.5)
+                await human_type(
+                    ["input[type='password']", "input[name*='password' i]"],
+                    password, "Password (post-signup login)"
+                )
+                await asyncio.sleep(0.5)
+                for btn_sel in ["button[data-testid='login-button-submit']", "button[type='submit']", "button:has-text('Sign in')", "button:has-text('Log in')"]:
+                    try:
+                        btn = page.locator(btn_sel).first
+                        if await btn.is_visible(timeout=2000):
+                            await btn.click(force=True)
+                            logger.info(f"Clicked post-signup login button: {btn_sel}")
+                            break
+                    except Exception:
+                        pass
+                await asyncio.sleep(5)
+                await dismiss_cookies()
+            
             for _ in range(15):
                 await asyncio.sleep(1)
                 await dismiss_cookies()
                 if existing_account and "signin" not in page.url:
                     registered = True
                     break
-                elif not existing_account and ("signup" not in page.url or registered):
+                elif not existing_account and "signup" not in page.url and "signin" not in page.url:
                     registered = True
+                    break
+                elif not existing_account and registered:
                     break
                 
                 # If still on signup, check for 'already registered' errors
