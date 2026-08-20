@@ -755,6 +755,7 @@ async def _run_firefox_signup_and_onboard(
         from playwright.async_api import async_playwright
         from playwright_stealth import Stealth
         import os
+        from urllib.parse import urlparse
         is_headless = os.getenv('HEADLESS', 'true').lower() == 'true'
         proxy_url = os.getenv('BROWSER_PROXY', '').strip()
         
@@ -765,8 +766,17 @@ async def _run_firefox_signup_and_onboard(
                 "args": ["--disable-blink-features=AutomationControlled"]
             }
             if proxy_url:
-                launch_args["proxy"] = {"server": proxy_url}
-                logger.info(f"Browser proxy configured: {proxy_url.split('@')[-1] if '@' in proxy_url else proxy_url}")
+                parsed = urlparse(proxy_url)
+                if parsed.username and parsed.password:
+                    # Playwright needs username/password separately
+                    launch_args["proxy"] = {
+                        "server": f"{parsed.scheme}://{parsed.hostname}:{parsed.port}",
+                        "username": parsed.username,
+                        "password": parsed.password
+                    }
+                else:
+                    launch_args["proxy"] = {"server": proxy_url}
+                logger.info(f"Browser proxy configured: {parsed.hostname}:{parsed.port}")
             else:
                 logger.warning("No BROWSER_PROXY set — reCAPTCHA may block on datacenter IPs")
 

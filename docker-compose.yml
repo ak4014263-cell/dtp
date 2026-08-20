@@ -206,6 +206,7 @@ services:
       - DATABASE_URL=postgresql://swiply:swiply123@postgres:5432/swiply
       - REDIS_URL=redis://redis:6379/0
       - HEADLESS=false
+      - BROWSER_PROXY=socks5://daddy2Tg:shcaT7pV@cdn.dexodata.com:443
     ports:
       - "8012:8012"
     volumes:
