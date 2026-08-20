@@ -8,7 +8,7 @@ import {
   Terminal, Monitor, Maximize2, Radio, Activity
 } from 'lucide-react'
 
-const API_BASE = ((import.meta as any).env?.VITE_API_URL) || 'http://localhost:8000'
+const API_BASE = '/api'
 const WTTJ_SERVICE = '/wttj'
 
 interface SetupStatus {

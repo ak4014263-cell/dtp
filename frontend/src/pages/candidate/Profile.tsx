@@ -8,7 +8,7 @@ import axios from 'axios'
 import { useAuthStore } from '../../store/authStore'
 import toast from 'react-hot-toast'
 
-const API_BASE = 'http://localhost:8000'
+const API_BASE = '/api'
 
 const defaultProfile = {
   first_name: '', last_name: '', email: '', phone: '', location: '',

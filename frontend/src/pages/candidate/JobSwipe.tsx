@@ -5,7 +5,7 @@ import { useAuthStore } from '../../store/authStore'
 import toast from 'react-hot-toast'
 import axios from 'axios'
 
-const API_BASE = ((import.meta as any).env?.VITE_API_URL) || 'http://localhost:8000'
+const API_BASE = '/api'
 const WTTJ_SERVICE_URL = '/wttj'
 
 export default function JobSwipe() {

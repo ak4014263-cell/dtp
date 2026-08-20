@@ -4,9 +4,9 @@ import { useAuthStore } from '../../store/authStore'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
-const CREDENTIAL_SERVICE = 'http://localhost:8009'
+const CREDENTIAL_SERVICE = '/api'
 const WTTJ_SERVICE = '/wttj'
-const API_BASE = ((import.meta as any).env?.VITE_API_URL) || 'http://localhost:8000'
+const API_BASE = '/api'
 
 export default function Credentials() {
   const { user } = useAuthStore()
