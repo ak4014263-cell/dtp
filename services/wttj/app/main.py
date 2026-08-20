@@ -762,8 +762,13 @@ async def _run_firefox_signup_and_onboard(
                 viewport={"width": 1440, "height": 900},
                 locale="en-US",
                 timezone_id="Europe/Paris",
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0",
             )
             page = await ctx.new_page()
+            
+            # Anti-bot stealth injections
+            await page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+            await page.add_init_script("Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] })")
 
             # Track registration API
             registered = False
