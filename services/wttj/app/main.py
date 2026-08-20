@@ -753,22 +753,24 @@ async def _run_firefox_signup_and_onboard(
 
     try:
         from playwright.async_api import async_playwright
+        from playwright_stealth import stealth_async
 
         import os
         is_headless = os.getenv('HEADLESS', 'true').lower() == 'true'
         async with async_playwright() as pw:
-            browser = await pw.firefox.launch(headless=is_headless, slow_mo=60)
+            browser = await pw.chromium.launch(
+                headless=is_headless,
+                slow_mo=60,
+                args=["--disable-blink-features=AutomationControlled"]
+            )
             ctx = await browser.new_context(
                 viewport={"width": 1440, "height": 900},
                 locale="en-US",
                 timezone_id="Europe/Paris",
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0",
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
             )
             page = await ctx.new_page()
-            
-            # Anti-bot stealth injections
-            await page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-            await page.add_init_script("Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] })")
+            await stealth_async(page)
 
             # Track registration API
             registered = False

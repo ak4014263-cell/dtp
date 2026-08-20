@@ -6,8 +6,8 @@ WORKDIR /app
 COPY services/wttj/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt psycopg2-binary sqlalchemy
 
-# Install Playwright browsers (Firefox specifically needed)
-RUN playwright install firefox
+# Install Playwright browsers (Chromium for stealth)
+RUN playwright install chromium
 RUN playwright install-deps
 
 # Copy shared library
