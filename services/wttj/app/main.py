@@ -900,8 +900,7 @@ async def _run_firefox_signup_and_onboard(
                     if await btn.is_visible(timeout=1000):
                         box = await btn.bounding_box()
                         if box:
-                            # Scroll button into view
-                            await page.evaluate(f"document.querySelector(\"{btn_sel.replace('\"', \"'\")} \").scrollIntoView()" if False else "")
+                            # Scroll button into view before clicking
                             await btn.scroll_into_view_if_needed()
                             await asyncio.sleep(0.5)
                             # Move mouse naturally to button center
