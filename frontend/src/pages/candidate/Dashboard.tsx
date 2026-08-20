@@ -285,7 +285,7 @@ export default function Dashboard() {
 
       // Fire the request — backend returns 202 immediately and runs automation in background
       // Pass name so backend can fill profile fields (job title, phone, bio, location)
-      await axios.post(`${API_BASE}/wttj/create-account`, {
+      await axios.post(`${API_BASE}/wttj/onboard-new-user`, {
         user_id: user?.id,
         name: rawName,
         first_name: firstName,
@@ -347,7 +347,7 @@ export default function Dashboard() {
 
       // Use API Gateway instead of hardcoded 8012
       const response = await axios.post(
-        `${API_BASE}/wttj/create-account`,
+        `${API_BASE}/wttj/onboard-new-user`,
         {
           user_id: user?.id,
           candidate_id: user?.id,
