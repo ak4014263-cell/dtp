@@ -753,7 +753,7 @@ async def _run_firefox_signup_and_onboard(
 
     try:
         from playwright.async_api import async_playwright
-        from playwright_stealth import stealth_async
+        from playwright_stealth import Stealth
 
         import os
         is_headless = os.getenv('HEADLESS', 'true').lower() == 'true'
@@ -770,7 +770,7 @@ async def _run_firefox_signup_and_onboard(
                 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
             )
             page = await ctx.new_page()
-            await stealth_async(page)
+            await Stealth().apply_stealth_async(page)
 
             # Track registration API
             registered = False
