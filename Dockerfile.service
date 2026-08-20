@@ -8,7 +8,7 @@ ENV PORT=${PORT}
 WORKDIR /app
 
 # Install dependencies
-COPY requirements.txt .
+COPY services/${SERVICE_NAME}/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy shared library
