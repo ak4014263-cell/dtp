@@ -25,7 +25,7 @@ interface SyncStatus {
   error?: string;
 }
 
-const SYNC_SERVICE_URL = `http://${window.location.hostname}:8012`;
+const SYNC_SERVICE_URL = '/wttj';
 
 /**
  * Swipply registration ke saath WTTJ form fill karo
@@ -101,7 +101,7 @@ export class WTTJSyncWebSocket {
   private onStatusUpdate: ((status: SyncStatus) => void) | null = null;
   
   connect() {
-    this.ws = new WebSocket(`ws://${window.location.hostname}:8012/ws/registration-sync`);
+    this.ws = new WebSocket(`ws://${window.location.host}/wttj/ws/registration-sync`);
     
     this.ws.onopen = () => {
       console.log('🔌 Connected to WTTJ sync service');
