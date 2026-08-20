@@ -205,7 +205,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://swiply:swiply123@postgres:5432/swiply
       - REDIS_URL=redis://redis:6379/0
-      - HEADLESS=true
+      - HEADLESS=false
     ports:
       - "8012:8012"
     volumes:
